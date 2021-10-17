@@ -37,6 +37,15 @@ public class MBCache<K, V> implements CacheMap<K, V> {
     }
 
     @Override
+    public void reloadCache(K key, V value, long expireAfter, TimeUnit expirationTimeUnit) {
+        reloadCache(key, value);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        Runnable expiration = () -> reloadCache(key, value);
+        executorService.schedule(expiration, expireAfter, expirationTimeUnit);
+        executorService.shutdown();
+    }
+
+    @Override
     public Optional<V> findByKey(K key) {
         return Optional.ofNullable(cacheMap.get(key));
     }

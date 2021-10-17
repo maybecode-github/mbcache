@@ -14,6 +14,8 @@ public interface CacheMap<K, V> {
 
     void reloadCache(K key, V value);
 
+    void reloadCache(K key, V value, long expireAfter, TimeUnit expirationTimeUnit);
+
     Optional<V> findByKey(K key);
 
     Optional<K> findByValue(V value);
