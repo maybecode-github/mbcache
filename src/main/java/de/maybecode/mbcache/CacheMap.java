@@ -28,6 +28,8 @@ public interface CacheMap<K, V> {
 
     boolean isCachedValue(V value);
 
+    int getSize();
+
     /**
      * clears cache completely after time
      *

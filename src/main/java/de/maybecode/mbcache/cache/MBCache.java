@@ -21,7 +21,7 @@ public class MBCache<K, V> implements CacheMap<K, V> {
     public void cache(K key, V value, long expireAfter, TimeUnit expirationTimeUnit) {
         cache(key, value);
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        Runnable expiration = () -> reloadCache(key, value);
+        Runnable expiration = () -> reloadCache(key, value, expireAfter, expirationTimeUnit);
         executorService.schedule(expiration, expireAfter, expirationTimeUnit);
         executorService.shutdown();
     }
@@ -40,7 +40,7 @@ public class MBCache<K, V> implements CacheMap<K, V> {
     public void reloadCache(K key, V value, long expireAfter, TimeUnit expirationTimeUnit) {
         reloadCache(key, value);
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        Runnable expiration = () -> reloadCache(key, value);
+        Runnable expiration = () -> reloadCache(key, value, expireAfter, expirationTimeUnit);
         executorService.schedule(expiration, expireAfter, expirationTimeUnit);
         executorService.shutdown();
     }
@@ -73,6 +73,11 @@ public class MBCache<K, V> implements CacheMap<K, V> {
     @Override
     public boolean isCachedValue(V value) {
         return cacheMap.containsValue(value);
+    }
+
+    @Override
+    public int getSize() {
+        return cacheMap.size();
     }
 
     @Override

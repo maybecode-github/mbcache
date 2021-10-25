@@ -68,9 +68,14 @@ public class MBCacheConfig implements CacheConfig {
 
     @Override
     public Optional<Object> getOptional(String path, Object defaultValue) {
-        if (this.configCache.isCached(path))
+        if (this.configCache.isCached(path)) {
             return this.configCache.findByKey(path);
-        set(path, defaultValue);
+        }
+        if (this.configuration.contains(path)) {
+            this.configCache.cache(path, this.configuration.get(path));
+        } else {
+            replace(path, defaultValue);
+        }
         return this.configCache.findByKey(path);
     }
 
