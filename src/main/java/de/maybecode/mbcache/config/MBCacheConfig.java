@@ -151,8 +151,14 @@ public class MBCacheConfig implements CacheConfig {
         if (this.configCache.isCached(path)) {
             return (List<Integer>) this.configCache.findByKey(path).orElse(defaultList);
         }
-        set(path, Arrays.asList(defaultValue));
-        return this.configuration.getIntList(path);
+        if (this.configuration.contains(path)) {
+            this.configCache.cache(path, defaultList);
+            return this.configuration.getIntList(path);
+        } else {
+            this.configuration.set(path, defaultList);
+            save();
+            return defaultList;
+        }
     }
 
     @Override
