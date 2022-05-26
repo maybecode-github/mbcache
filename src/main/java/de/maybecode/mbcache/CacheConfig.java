@@ -8,6 +8,8 @@ public interface CacheConfig {
 
     void set(String path, Object value);
 
+    <V> void setGenericType(String path, V value);
+
     void set(String path, Object value, long reloadAfter, TimeUnit timeUnit);
 
     void replace(String path, Object value);
@@ -17,6 +19,8 @@ public interface CacheConfig {
     Optional<Object> getOptional(String path, Object defaultValue);
 
     Object get(String path, Object defaultValue);
+
+    <V> V getGenericType(String path, Class<V> clazz);
 
     String getString(String path, String defaultValue);
 

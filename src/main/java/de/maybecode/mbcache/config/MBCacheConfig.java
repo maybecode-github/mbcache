@@ -1,5 +1,7 @@
 package de.maybecode.mbcache.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.maybecode.mbcache.CacheConfig;
 import de.maybecode.mbcache.CacheMap;
 import de.maybecode.mbcache.cache.MBCache;
@@ -19,6 +21,8 @@ public class MBCacheConfig implements CacheConfig {
     private final YamlConfiguration configuration;
 
     private final CacheMap<String, Object> configCache = new MBCache<>();
+
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public MBCacheConfig(String file) {
         this.file = new File(file);
@@ -43,6 +47,11 @@ public class MBCacheConfig implements CacheConfig {
     }
 
     @Override
+    public <V> void setGenericType(String path, V value) {
+        set(path, GSON.toJson(value));
+    }
+
+    @Override
     public void set(String path, Object value, long reloadAfter, TimeUnit timeUnit) {
         this.configCache.cache(path, value, reloadAfter, timeUnit);
         if (!this.configuration.contains(path)) {
@@ -56,7 +65,6 @@ public class MBCacheConfig implements CacheConfig {
         this.configCache.reloadCache(path, value);
         this.configuration.set(path, value);
         save();
-
     }
 
     @Override
@@ -82,6 +90,11 @@ public class MBCacheConfig implements CacheConfig {
     @Override
     public Object get(String path, Object defaultValue) {
         return getOptional(path, defaultValue).orElse(defaultValue);
+    }
+
+    @Override
+    public <V> V getGenericType(String path, Class<V> clazz) {
+        return GSON.fromJson(getString(path, "null"), clazz);
     }
 
     @Override
